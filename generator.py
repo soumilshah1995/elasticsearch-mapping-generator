@@ -35,7 +35,6 @@ class MappingGenerator(object):
             }
         }
 
-
     def add_feilds(self,
                    feild_name=None,
                    type=None,
@@ -43,19 +42,30 @@ class MappingGenerator(object):
                    keywords=True):
 
         if not feild_name.__contains__("."):
-            template = {
-                "properties" : {
-                    "{}".format(feild_name):{
-                        "type":type,
-                        'index':index,
-                        'fields':{
-                            "keyword" : {
-                                "type" : "keyword",
-                                "ignore_above" : 256
-                            }},
+            if keywords:
+                template = {
+                    "properties" : {
+                        "{}".format(feild_name):{
+                            "type":type,
+                            'index':index,
+
+                            'fields':{
+                                "keyword" : {
+                                    "type" : "keyword",
+                                    "ignore_above" : 256
+                                }},
+                        }
                     }
                 }
-            }
+            else:
+                template = {
+                    "properties" : {
+                        "{}".format(feild_name):{
+                            "type":type,
+                            'index':index,
+                        },
+                    }
+                }
             self.mappers['mappings']['properties'][feild_name] = template.get("properties").get("{}".format(feild_name))
         else:
             primary, child = feild_name.split(".")
@@ -68,24 +78,30 @@ class MappingGenerator(object):
                     "properties":{
                     }
                 }
-
-            self.mappers['mappings']['properties'][primary]['properties'][child] = {
-                "type":type,
-                'index':index,
-                'fields':{
-                    "keyword" : {
-                        "type" : "keyword",
-                        "ignore_above" : 256
+            if keywords:
+                self.mappers['mappings']['properties'][primary]['properties'][child] = {
+                    "type":type,
+                    'index':index,
+                    'fields':{
+                        "keyword" : {
+                            "type" : "keyword",
+                            "ignore_above" : 256
+                        }
                     }
                 }
-            }
+            else:
+                self.mappers['mappings']['properties'][primary]['properties'][child] = {
+                    "type":type,
+                    'index':index,
+                }
 
     def complete_mappings(self):
         return self.mappers
 
+
 if __name__ == '__main__':
     _helper = MappingGenerator(number_of_replicas=1,number_of_shards=20)
-    _helper.add_feilds(feild_name='name.first_name', type='text', index=True)
+    _helper.add_feilds(feild_name='name.first_name', type='text', index=True, keywords=False)
     _helper.add_feilds(feild_name='name.last_name', type='text', index=True)
     query = _helper.complete_mappings()
     print(json.dumps(query, indent=3))
