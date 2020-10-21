@@ -1,0 +1,9 @@
+LICENSE
+MANIFEST.in
+README.md
+setup.py
+elasticsearchmappinggenerator/elasticsearchmappinggenerator.py
+elasticsearchmappinggenerator.egg-info/PKG-INFO
+elasticsearchmappinggenerator.egg-info/SOURCES.txt
+elasticsearchmappinggenerator.egg-info/dependency_links.txt
+elasticsearchmappinggenerator.egg-info/top_level.txt
